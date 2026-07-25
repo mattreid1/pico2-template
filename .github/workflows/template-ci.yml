@@ -1,0 +1,63 @@
+name: Template CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: template-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generated-projects:
+    name: ${{ matrix.hal }} / defmt=${{ matrix.defmt }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        hal:
+          - embassy
+          - rp-hal
+        defmt:
+          - "true"
+          - "false"
+
+    steps:
+      - name: Check out the template
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Install the RP2350 Rust target
+        run: rustup target add thumbv8m.main-none-eabihf
+
+      - name: Install cargo-generate
+        run: cargo install cargo-generate --version 0.23.14 --locked
+
+      - name: Render the template
+        env:
+          DEFMT: ${{ matrix.defmt }}
+          HAL: ${{ matrix.hal }}
+          TEMPLATE_ROOT: ${{ github.workspace }}
+        run: |
+          project_name="ci-${HAL}-defmt-${DEFMT}"
+          cd "$RUNNER_TEMP"
+          cargo generate \
+            --path "$TEMPLATE_ROOT" \
+            --name "$project_name" \
+            --destination "$RUNNER_TEMP/generated" \
+            --define "hal=$HAL" \
+            --define "defmt=$DEFMT" \
+            --silent
+          test ! -e "$RUNNER_TEMP/generated/$project_name/.github"
+          test ! -e "$RUNNER_TEMP/generated/$project_name/renovate.json"
+          echo "PROJECT_DIR=$RUNNER_TEMP/generated/$project_name" >> "$GITHUB_ENV"
+
+      - name: Check the generated project
+        run: |
+          cd "$PROJECT_DIR"
+          cargo check

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "dependencyDashboard": true,
+  "labels": [
+    "dependencies"
+  ],
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "rangeStrategy": "bump",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^Cargo\\.toml$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+[A-Za-z0-9_-]+\\s*=\\s*(?:\\{\\s*version\\s*=\\s*)?\"(?<currentValue>[^\"]+)\""
+      ],
+      "versioningTemplate": "cargo"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Keep Embassy updates together so the rendered project tests the complete release set",
+      "matchPackageNames": [
+        "embassy-*"
+      ],
+      "groupName": "Embassy crates"
+    }
+  ]
+}

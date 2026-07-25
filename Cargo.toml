@@ -11,14 +11,18 @@ bench = false
 
 [dependencies]
 # Cortex-M 
+# renovate: datasource=crate depName=cortex-m
 cortex-m = "0.7.7"
+# renovate: datasource=crate depName=cortex-m-rt
 cortex-m-rt = "0.7.5"
 
 # Panic Handler
+# renovate: datasource=crate depName=panic-probe
 panic-probe = { version = "1.0.0"{% if defmt -%}, features = ["print-defmt"]{% endif %} }
 
 {% if hal == "embassy" -%}
 # Embassy
+# renovate: datasource=crate depName=embassy-executor
 embassy-executor = { version = "0.10", features = [
   "platform-cortex-m",
   "executor-thread",
@@ -26,12 +30,14 @@ embassy-executor = { version = "0.10", features = [
   "defmt",
   {%- endif %}
 ] }
+# renovate: datasource=crate depName=embassy-time
 embassy-time = { version = "0.5.0", features = [
   {% if defmt -%}
   "defmt",
   "defmt-timestamp-uptime-tms",
   {%- endif -%}
 ]}
+# renovate: datasource=crate depName=embassy-rp
 embassy-rp = { version = "0.10.0", features = [
   "time-driver",
   "critical-section-impl",
@@ -42,7 +48,9 @@ embassy-rp = { version = "0.10.0", features = [
   {%- endif %}
 ] }
 {% else -%}
+# renovate: datasource=crate depName=embedded-hal
 embedded-hal = "1.0.0"
+# renovate: datasource=crate depName=rp235x-hal
 rp235x-hal = { version = "0.3.0", features = [
   "binary-info",
   "critical-section-impl",
@@ -51,10 +59,13 @@ rp235x-hal = { version = "0.3.0", features = [
   "defmt",
   {%- endif %}
 ] }
+# renovate: datasource=crate depName=rp-binary-info
 rp-binary-info = "0.1.1"
 {% endif %}
 {% if defmt -%}
 # Defmt Logging
+# renovate: datasource=crate depName=defmt
 defmt = "1.0.1"
+# renovate: datasource=crate depName=defmt-rtt
 defmt-rtt = "1.1.0"
 {% endif -%}

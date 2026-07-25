@@ -1,6 +1,7 @@
 [template]
 cargo_generate_version = ">=0.9.0"
 description = "A Pico2 project template with Embassy or RP-HAL"
+ignore = [".github", "renovate.json"]
 
 [hooks]
 pre = ["cargo-generate/prehook.rhai"]
