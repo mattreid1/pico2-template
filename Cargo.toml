@@ -1,7 +1,13 @@
 [package]
 name = "{{project-name}}"
-version = "0.2.0"
+version = "0.1.0"
 edition = "2024"
+
+[[bin]]
+name = "{{project-name}}"
+path = "src/main.rs"
+test = false
+bench = false
 
 [dependencies]
 # Cortex-M 
@@ -13,15 +19,20 @@ panic-probe = { version = "1.0.0"{% if defmt -%}, features = ["print-defmt"]{% e
 
 {% if hal == "embassy" -%}
 # Embassy
-embassy-executor = { version = "0.9", features = [
-  "arch-cortex-m",
+embassy-executor = { version = "0.10", features = [
+  "platform-cortex-m",
   "executor-thread",
   {% if defmt -%}
   "defmt",
   {%- endif %}
 ] }
-embassy-time = { version = "0.5.0" }
-embassy-rp = { version = "0.9.0", features = [
+embassy-time = { version = "0.5.0", features = [
+  {% if defmt -%}
+  "defmt",
+  "defmt-timestamp-uptime-tms",
+  {%- endif -%}
+]}
+embassy-rp = { version = "0.10.0", features = [
   "time-driver",
   "critical-section-impl",
   "rp235xa",
@@ -47,4 +58,3 @@ rp-binary-info = "0.1.1"
 defmt = "1.0.1"
 defmt-rtt = "1.1.0"
 {% endif -%}
-

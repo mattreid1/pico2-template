@@ -7,7 +7,7 @@ A Rust project template for Raspberry Pi Pico 2 (RP2350) development.
 Generate a new project:
 
 ```sh
-cargo generate --git https://github.com/ImplFerris/pico2-template.git
+cargo generate --git https://github.com/mattreid1/pico2-template.git
 ```
 
 ## Options
