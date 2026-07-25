@@ -45,6 +45,7 @@ jobs:
           TEMPLATE_ROOT: ${{ github.workspace }}
         run: |
           project_name="ci-${HAL}-defmt-${DEFMT}"
+          mkdir -p "$RUNNER_TEMP/generated"
           cd "$RUNNER_TEMP"
           cargo generate \
             --path "$TEMPLATE_ROOT" \
