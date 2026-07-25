@@ -55,6 +55,7 @@ jobs:
             --silent
           test ! -e "$RUNNER_TEMP/generated/$project_name/.github"
           test ! -e "$RUNNER_TEMP/generated/$project_name/renovate.json"
+          test -f "$RUNNER_TEMP/generated/$project_name/.probe-rs.toml"
           echo "PROJECT_DIR=$RUNNER_TEMP/generated/$project_name" >> "$GITHUB_ENV"
 
       - name: Check the generated project

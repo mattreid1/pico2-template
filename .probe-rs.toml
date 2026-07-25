@@ -1,0 +1,2 @@
+[presets]
+default = { chip = "RP235x" }

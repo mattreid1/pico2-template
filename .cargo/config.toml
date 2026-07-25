@@ -9,9 +9,6 @@
 # for the defmt logging
 DEFMT_LOG = "debug"
 
-# Set the probe-rs target used by commands such as `cargo flash`.
-PROBE_RS_CHIP = "RP235x"
-
 
 [build]
 # Set the default target to match the Cortex-M33 in the RP2350
