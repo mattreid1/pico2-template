@@ -16,3 +16,8 @@ default = "embassy"
 type = "bool"
 prompt = "Enable defmt logging?"
 default = true
+
+[placeholders.debug_probe]
+type = "bool"
+prompt = "Are you using a debug probe?"
+default = true

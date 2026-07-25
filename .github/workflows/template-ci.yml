@@ -16,17 +16,24 @@ concurrency:
 
 jobs:
   generated-projects:
-    name: ${{ matrix.hal }} / defmt=${{ matrix.defmt }}
+    name: ${{ matrix.hal }} / defmt=${{ matrix.defmt }} / debug-probe=${{ matrix.debug-probe }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        hal:
-          - embassy
-          - rp-hal
-        defmt:
-          - "true"
-          - "false"
+        include:
+          - hal: embassy
+            defmt: "true"
+            debug-probe: "true"
+          - hal: embassy
+            defmt: "false"
+            debug-probe: "false"
+          - hal: rp-hal
+            defmt: "true"
+            debug-probe: "false"
+          - hal: rp-hal
+            defmt: "false"
+            debug-probe: "true"
 
     steps:
       - name: Check out the template
@@ -40,11 +47,12 @@ jobs:
 
       - name: Render the template
         env:
+          DEBUG_PROBE: ${{ matrix.debug-probe }}
           DEFMT: ${{ matrix.defmt }}
           HAL: ${{ matrix.hal }}
           TEMPLATE_ROOT: ${{ github.workspace }}
         run: |
-          project_name="ci-${HAL}-defmt-${DEFMT}"
+          project_name="ci-${HAL}-defmt-${DEFMT}-probe-${DEBUG_PROBE}"
           mkdir -p "$RUNNER_TEMP/generated"
           cd "$RUNNER_TEMP"
           cargo generate \
@@ -53,10 +61,18 @@ jobs:
             --destination "$RUNNER_TEMP/generated" \
             --define "hal=$HAL" \
             --define "defmt=$DEFMT" \
+            --define "debug_probe=$DEBUG_PROBE" \
             --silent
           test ! -e "$RUNNER_TEMP/generated/$project_name/.github"
           test ! -e "$RUNNER_TEMP/generated/$project_name/renovate.json"
           test -f "$RUNNER_TEMP/generated/$project_name/.probe-rs.toml"
+          if [[ "$DEBUG_PROBE" == "true" ]]; then
+            grep -Fqx 'runner = "cargo flash --chip RP235x --reset --path"' \
+              "$RUNNER_TEMP/generated/$project_name/.cargo/config.toml"
+          else
+            grep -Fqx 'runner = "picotool load -u -v -x -t elf"' \
+              "$RUNNER_TEMP/generated/$project_name/.cargo/config.toml"
+          fi
           echo "PROJECT_DIR=$RUNNER_TEMP/generated/$project_name" >> "$GITHUB_ENV"
 
       - name: Check the generated project
