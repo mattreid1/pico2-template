@@ -51,7 +51,7 @@ embassy-rp = { version = "0.10.0", features = [
 # renovate: datasource=crate depName=embedded-hal
 embedded-hal = "1.0.0"
 # renovate: datasource=crate depName=rp235x-hal
-rp235x-hal = { version = "0.3.0", features = [
+rp235x-hal = { version = "0.4.0", features = [
   "binary-info",
   "critical-section-impl",
   "rt",
